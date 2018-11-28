@@ -1,0 +1,972 @@
+Function TACH(Ten As String, Kieu As Byte) ' neu kieu = 0 thi lay TEN, neu khong thi lay HO va CHU LOT
+   Dim bytSpace As Byte
+   bytSpace = InStrRev(Ten, " ", -1)
+   
+   If bytSpace = 0 Then
+      Tach= Ten
+      Exit Function
+   End If
+   
+   If Kieu = 0 Then
+      Tach= Right(Ten, Len(Ten) - bytSpace)
+   Else
+      Tach= Left(Ten, bytSpace - 1)
+   End If
+End Function
+
+Function VND(ByVal BaoNhieu)
+    Dim KetQua, SOTIEN, NHOM, Chu, Dich, S1, S2, S3 As String
+    Dim I, J, Vitri As Byte, S As Double
+    Dim Hang, DOC, DEM
+    If BaoNhieu = 0 Then
+        KetQua = "Khoâng ñoàng"
+    Else
+        If Abs(BaoNhieu) > 1E+15 Then
+            KetQua = "Soá Quùa Lôùn"
+        Else
+            If BaoNhieu < 0 Then
+                KetQua = "Tröø" & Space(1)
+            Else
+                KetQua = Space(0)
+            End If
+            SOTIEN = Format(Abs(BaoNhieu), "###############")
+            SOTIEN = Right(Space(15) & SOTIEN, 15)
+            Hang = Array("None", "traêm", "möôi", "gì ñoù")
+            DOC = Array("None", "ngaøn tyû,", "tyû,", "trieäu,", "ngaøn,", "ñoàng ")
+            DEM = Array("None", "moät", "hai", "ba", "boán", "naêm", "saùu", "baûy", "taùm", "chín")
+            For I = 1 To 5
+                NHOM = Mid(SOTIEN, I * 3 - 2, 3)
+                If NHOM <> Space(3) Then
+                    Select Case NHOM
+                        Case "000"
+                            If I = 5 Then
+                                Chu = "ñoàng chaün " & Space(1)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case Else
+                            S1 = Left(NHOM, 1)
+                            S2 = Mid(NHOM, 2, 1)
+                            S3 = Right(NHOM, 1)
+                            Chu = Space(0)
+                            Hang(3) = DOC(I)
+                            For J = 1 To 3
+                                Dich = Space(0)
+                                S = Val(Mid(NHOM, J, 1))
+                                If S > 0 Then
+                                    Dich = DEM(S) & Space(1) & Hang(J) & Space(1)
+                                End If
+                                Select Case J
+                                    Case 2 And S = 1
+                                        Dich = "möôøi" & Space(1)
+                                    Case 2 And S2 = "0" And S3 <> "0" And S1 >= "0" And I = 5
+                                        Dich = "leû" & Space(1)
+                                    Case 3 And S = 0 And NHOM <> Space(2) & "0"
+                                        Dich = Hang(J) & Space(1)
+                                    Case 3 And S = 5 And S2 <> Space(1) And S2 <> "0"
+                                        Dich = "l" & Mid(Dich, 2) 'Kyù töï en lôø
+                                    Case 2 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or _
+                                        (S1 = "0" And I = 4) Then
+                                            Dich = "linh" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or _
+                                        (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+                                    Case 1 And S = 0 And S3 = "0"
+                                        If (S1 >= "1" And S2 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or _
+                                        (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+                                End Select
+                                Chu = Chu & Dich
+                            Next J
+                    End Select
+                    Vitri = InStr(1, Chu, "möôi moät", 1)
+                    If Vitri > 0 Then Mid(Chu, Vitri, 9) = "möôi moát"
+                    KetQua = KetQua & Chu
+                End If
+            Next I
+        End If
+    End If
+    VND = UCase(Left(KetQua, 1)) & Mid(KetQua, 2)
+End Function
+
+
+Function AUD(ByVal BaoNhieu)
+    Dim KetQua, SOTIEN, NHOM, Chu, Dich, S1, S2, S3 As String
+    Dim I, J, Vitri As Byte, S As Double
+    Dim Hang, DOC, DEM
+    If BaoNhieu = 0 Then
+        KetQua = "Khoâng ñoàng"
+    Else
+        If Abs(BaoNhieu) > 999999999999.99 Then
+            KetQua = "Soá Quùa Lôùn"
+        Else
+            If BaoNhieu < 0 Then
+                KetQua = "Tröø" & Space(1)
+            Else
+                KetQua = Space(0)
+            End If
+            SOTIEN = Format(Abs(BaoNhieu), "###########0.00")
+            SOTIEN = Right(Space(12) & SOTIEN, 15)
+            Hang = Array("None", "traêm", "möôi", "gì ñoù")
+            DOC = Array("None", "tyû", "trieäu", "ngaøn", "ñoâ la UÙc ", "cent.")
+            DEM = Array("None", "moät", "hai", "ba", "boán", "naêm", "saùu", "baûy", "taùm", "chín")
+            For I = 1 To 5
+                NHOM = Mid(SOTIEN, I * 3 - 2, 3)
+                If NHOM <> Space(3) Then
+                    Select Case NHOM
+                        Case "000"
+                            If I = 4 Then
+                                Chu = "ñoâ la UÙc" & Space(1)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case ".00"
+                            If I = 5 Then
+                                Chu = " chaün." & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case Else
+                            S1 = Left(NHOM, 1)
+                            S2 = Mid(NHOM, 2, 1)
+                            S3 = Right(NHOM, 1)
+                            Chu = Space(0)
+                            Hang(3) = DOC(I)
+                            For J = 1 To 3
+                                Dich = Space(0)
+                                S = Val(Mid(NHOM, J, 1))
+                                If S > 0 Then
+                                    Dich = DEM(S) & Space(1) & Hang(J) & Space(1)
+                                End If
+                                Select Case J
+                                    Case 2 And S = 1
+                                        Dich = "möôøi" & Space(1)
+                                    Case 3 And S = 0 And NHOM <> Space(2) & "0"
+                                        Dich = Hang(J) & Space(1)
+                                    Case 3 And S = 5 And S2 <> Space(1) And S2 <> "0"
+                                        Dich = "l" & Mid(Dich, 2) 'Kyù töï en lôø
+                                    Case 2 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "linh" & Space(1)
+                                        End If
+
+                                        W = Mid(SOTIEN, 14, 2)
+                                        If W > "0" And I = 5 Then
+                                            Dich = "leû" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+                                    Case 1 And S = 0 And S3 = "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+                                End Select
+                                Chu = Chu & Dich
+                            Next J
+                    End Select
+                    Vitri = InStr(1, Chu, "möôi moät", 1)
+                    If Vitri > 0 Then Mid(Chu, Vitri, 9) = "möôi moát"
+                    KetQua = KetQua & Chu
+                End If
+            Next I
+        End If
+    End If
+    AUD = UCase(Left(KetQua, 1)) & Mid(KetQua, 2)
+End Function
+
+
+Function CAD(ByVal BaoNhieu)
+    Dim KetQua, SOTIEN, NHOM, Chu, Dich, S1, S2, S3 As String
+    Dim I, J, Vitri As Byte, S As Double
+    Dim Hang, DOC, DEM
+    If BaoNhieu = 0 Then
+        KetQua = "Khoâng ñoàng"
+    Else
+        If Abs(BaoNhieu) > 999999999999.99 Then
+            KetQua = "Soá Quùa Lôùn"
+        Else
+            If BaoNhieu < 0 Then
+                KetQua = "Tröø" & Space(1)
+            Else
+                KetQua = Space(0)
+            End If
+            SOTIEN = Format(Abs(BaoNhieu), "###########0.00")
+            SOTIEN = Right(Space(12) & SOTIEN, 15)
+            Hang = Array("None", "traêm", "möôi", "gì ñoù")
+            DOC = Array("None", "tyû", "trieäu", "ngaøn", "ñoâ la Canada", "cent.")
+            DEM = Array("None", "moät", "hai", "ba", "boán", "naêm", "saùu", "baûy", "taùm", "chín")
+            For I = 1 To 5
+                NHOM = Mid(SOTIEN, I * 3 - 2, 3)
+                If NHOM <> Space(3) Then
+                    Select Case NHOM
+                        Case "000"
+                            If I = 4 Then
+                                Chu = "ñoâ la Canada" & Space(1)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case ".00"
+                            If I = 5 Then
+                                Chu = " chaün." & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case Else
+                            S1 = Left(NHOM, 1)
+                            S2 = Mid(NHOM, 2, 1)
+                            S3 = Right(NHOM, 1)
+                            Chu = Space(0)
+                            Hang(3) = DOC(I)
+                            For J = 1 To 3
+                                Dich = Space(0)
+                                S = Val(Mid(NHOM, J, 1))
+                                If S > 0 Then
+                                    Dich = DEM(S) & Space(1) & Hang(J) & Space(1)
+                                End If
+                                Select Case J
+                                    Case 2 And S = 1
+                                        Dich = "möôøi" & Space(1)
+                                    Case 3 And S = 0 And NHOM <> Space(2) & "0"
+                                        Dich = Hang(J) & Space(1)
+                                    Case 3 And S = 5 And S2 <> Space(1) And S2 <> "0"
+                                        Dich = "l" & Mid(Dich, 2) 'Kyù töï en lôø
+                                    Case 2 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "linh" & Space(1)
+                                        End If
+
+                                        W = Mid(SOTIEN, 14, 2)
+                                        If W > "0" And I = 5 Then
+                                            Dich = "leû" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 = "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                End Select
+
+
+                                Chu = Chu & Dich
+                            Next J
+                    End Select
+                    Vitri = InStr(1, Chu, "möôi moät", 1)
+                    If Vitri > 0 Then Mid(Chu, Vitri, 9) = "möôi moát"
+                    KetQua = KetQua & Chu
+                End If
+            Next I
+        End If
+    End If
+    CAD = UCase(Left(KetQua, 1)) & Mid(KetQua, 2)
+End Function
+
+
+Function EUR(ByVal BaoNhieu)
+    Dim KetQua, SOTIEN, NHOM, Chu, Dich, S1, S2, S3 As String
+    Dim I, J, Vitri As Byte, S As Double
+    Dim Hang, DOC, DEM
+    If BaoNhieu = 0 Then
+        KetQua = "Khoâng ñoàng"
+    Else
+        If Abs(BaoNhieu) > 999999999999.99 Then
+            KetQua = "Soá Quùa Lôùn"
+        Else
+            If BaoNhieu < 0 Then
+                KetQua = "Tröø" & Space(1)
+            Else
+                KetQua = Space(0)
+            End If
+            SOTIEN = Format(Abs(BaoNhieu), "###########0.00")
+            SOTIEN = Right(Space(12) & SOTIEN, 15)
+            Hang = Array("None", "traêm", "möôi", "gì ñoù")
+            DOC = Array("None", "tyû", "trieäu", "ngaøn", "Euro", "cent.")
+            DEM = Array("None", "moät", "hai", "ba", "boán", "naêm", "saùu", "baûy", "taùm", "chín")
+            For I = 1 To 5
+                NHOM = Mid(SOTIEN, I * 3 - 2, 3)
+                If NHOM <> Space(3) Then
+                    Select Case NHOM
+                        Case "000"
+                            If I = 4 Then
+                                Chu = "Euro" & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case ".00"
+                            If I = 5 Then
+                                Chu = " chaün. " & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case Else
+                            S1 = Left(NHOM, 1)
+                            S2 = Mid(NHOM, 2, 1)
+                            S3 = Right(NHOM, 1)
+                            Chu = Space(0)
+                            Hang(3) = DOC(I)
+                            For J = 1 To 3
+                                Dich = Space(0)
+                                S = Val(Mid(NHOM, J, 1))
+                                If S > 0 Then
+                                    Dich = DEM(S) & Space(1) & Hang(J) & Space(1)
+                                End If
+                                Select Case J
+                                    Case 2 And S = 1
+                                        Dich = "möôøi" & Space(1)
+                                    Case 3 And S = 0 And NHOM <> Space(2) & "0"
+                                        Dich = Hang(J) & Space(1)
+                                    Case 3 And S = 5 And S2 <> Space(1) And S2 <> "0"
+                                        Dich = "l" & Mid(Dich, 2) 'Kyù töï en lôø
+                                    Case 2 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "linh" & Space(1)
+                                        End If
+
+                                        W = Mid(SOTIEN, 14, 2)
+                                        If W > "0" And I = 5 Then
+                                            Dich = "leû" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 = "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                End Select
+                                Chu = Chu & Dich
+                            Next J
+                    End Select
+                    Vitri = InStr(1, Chu, "möôi moät", 1)
+                    If Vitri > 0 Then Mid(Chu, Vitri, 9) = "möôi moát"
+                    KetQua = KetQua & Chu
+                End If
+            Next I
+        End If
+    End If
+    EUR = UCase(Left(KetQua, 1)) & Mid(KetQua, 2)
+End Function
+
+Function HKD(ByVal BaoNhieu)
+    Dim KetQua, SOTIEN, NHOM, Chu, Dich, S1, S2, S3 As String
+    Dim I, J, Vitri As Byte, S As Double
+    Dim Hang, DOC, DEM
+    If BaoNhieu = 0 Then
+        KetQua = "Khoâng ñoàng"
+    Else
+        If Abs(BaoNhieu) > 999999999999.99 Then
+            KetQua = "Soá Quùa Lôùn"
+        Else
+            If BaoNhieu < 0 Then
+                KetQua = "Tröø" & Space(1)
+            Else
+                KetQua = Space(0)
+            End If
+            SOTIEN = Format(Abs(BaoNhieu), "###########0.00")
+            SOTIEN = Right(Space(12) & SOTIEN, 15)
+            Hang = Array("None", "traêm", "möôi", "gì ñoù")
+            DOC = Array("None", "tyû", "trieäu", "ngaøn", "ñoâ la Hoàng koâng", "cent.")
+            DEM = Array("None", "moät", "hai", "ba", "boán", "naêm", "saùu", "baûy", "taùm", "chín")
+            For I = 1 To 5
+                NHOM = Mid(SOTIEN, I * 3 - 2, 3)
+                If NHOM <> Space(3) Then
+                    Select Case NHOM
+                        Case "000"
+                            If I = 4 Then
+                                Chu = "ñoâ la Hoàng coâng" & Space(1)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case ".00"
+                            If I = 5 Then
+                                Chu = " chaün." & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case Else
+                            S1 = Left(NHOM, 1)
+                            S2 = Mid(NHOM, 2, 1)
+                            S3 = Right(NHOM, 1)
+                            Chu = Space(0)
+                            Hang(3) = DOC(I)
+                            For J = 1 To 3
+                                Dich = Space(0)
+                                S = Val(Mid(NHOM, J, 1))
+                                If S > 0 Then
+                                    Dich = DEM(S) & Space(1) & Hang(J) & Space(1)
+                                End If
+                                Select Case J
+                                    Case 2 And S = 1
+                                        Dich = "möôøi" & Space(1)
+                                    Case 3 And S = 0 And NHOM <> Space(2) & "0"
+                                        Dich = Hang(J) & Space(1)
+                                    Case 3 And S = 5 And S2 <> Space(1) And S2 <> "0"
+                                        Dich = "l" & Mid(Dich, 2) 'Kyù töï en lôø
+                                    Case 2 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "linh" & Space(1)
+                                        End If
+
+                                        W = Mid(SOTIEN, 14, 2)
+                                        If W > "0" And I = 5 Then
+                                            Dich = "leû" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 = "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                End Select
+
+
+                                Chu = Chu & Dich
+                            Next J
+                    End Select
+                    Vitri = InStr(1, Chu, "möôi moät", 1)
+                    If Vitri > 0 Then Mid(Chu, Vitri, 9) = "möôi moát"
+                    KetQua = KetQua & Chu
+                End If
+            Next I
+        End If
+    End If
+    HKD = UCase(Left(KetQua, 1)) & Mid(KetQua, 2)
+End Function
+
+
+
+Function GBP(ByVal BaoNhieu)
+    Dim KetQua, SOTIEN, NHOM, Chu, Dich, S1, S2, S3 As String
+    Dim I, J, Vitri As Byte, S As Double
+    Dim Hang, DOC, DEM
+    If BaoNhieu = 0 Then
+        KetQua = "Khoâng ñoàng"
+    Else
+        If Abs(BaoNhieu) > 999999999999.99 Then
+            KetQua = "Soá Quùa Lôùn"
+        Else
+            If BaoNhieu < 0 Then
+                KetQua = "Tröø" & Space(1)
+            Else
+                KetQua = Space(0)
+            End If
+            SOTIEN = Format(Abs(BaoNhieu), "###########0.00")
+            SOTIEN = Right(Space(12) & SOTIEN, 15)
+            Hang = Array("None", "traêm", "möôi", "gì ñoù")
+            DOC = Array("None", "tyû", "trieäu", "ngaøn", "baûng Anh ", "cent.")
+            DEM = Array("None", "moät", "hai", "ba", "boán", "naêm", "saùu", "baûy", "taùm", "chín")
+            For I = 1 To 5
+                NHOM = Mid(SOTIEN, I * 3 - 2, 3)
+                If NHOM <> Space(3) Then
+                    Select Case NHOM
+                        Case "000"
+                            If I = 4 Then
+                                Chu = "baûng Anh" & Space(1)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case ".00"
+                            If I = 5 Then
+                                Chu = " chaün." & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case Else
+                            S1 = Left(NHOM, 1)
+                            S2 = Mid(NHOM, 2, 1)
+                            S3 = Right(NHOM, 1)
+                            Chu = Space(0)
+                            Hang(3) = DOC(I)
+                            For J = 1 To 3
+                                Dich = Space(0)
+                                S = Val(Mid(NHOM, J, 1))
+                                If S > 0 Then
+                                    Dich = DEM(S) & Space(1) & Hang(J) & Space(1)
+                                End If
+                                Select Case J
+                                    Case 2 And S = 1
+                                        Dich = "möôøi" & Space(1)
+                                    Case 3 And S = 0 And NHOM <> Space(2) & "0"
+                                        Dich = Hang(J) & Space(1)
+                                    Case 3 And S = 5 And S2 <> Space(1) And S2 <> "0"
+                                        Dich = "l" & Mid(Dich, 2) 'Kyù töï en lôø
+                                    Case 2 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "linh" & Space(1)
+                                        End If
+
+                                        W = Mid(SOTIEN, 14, 2)
+                                        If W > "0" And I = 5 Then
+                                            Dich = "leû" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 = "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                End Select
+
+
+                                Chu = Chu & Dich
+                            Next J
+                    End Select
+                    Vitri = InStr(1, Chu, "möôi moät", 1)
+                    If Vitri > 0 Then Mid(Chu, Vitri, 9) = "möôi moát"
+                    KetQua = KetQua & Chu
+                End If
+            Next I
+        End If
+    End If
+    GBP = UCase(Left(KetQua, 1)) & Mid(KetQua, 2)
+End Function
+
+
+Function JPY(ByVal BaoNhieu)
+    Dim KetQua, SOTIEN, NHOM, Chu, Dich, S1, S2, S3 As String
+    Dim I, J, Vitri As Byte, S As Double
+    Dim Hang, DOC, DEM
+    If BaoNhieu = 0 Then
+        KetQua = "Khoâng ñoàng"
+    Else
+        If Abs(BaoNhieu) > 999999999999.99 Then
+            KetQua = "Soá Quùa Lôùn"
+        Else
+            If BaoNhieu < 0 Then
+                KetQua = "Tröø" & Space(1)
+            Else
+                KetQua = Space(0)
+            End If
+            SOTIEN = Format(Abs(BaoNhieu), "###########0.00")
+            SOTIEN = Right(Space(12) & SOTIEN, 15)
+            Hang = Array("None", "traêm", "möôi", "gì ñoù")
+            DOC = Array("None", "tyû", "trieäu", "ngaøn", "yeân Nhaät", "cent.")
+            DEM = Array("None", "moät", "hai", "ba", "boán", "naêm", "saùu", "baûy", "taùm", "chín")
+            For I = 1 To 5
+                NHOM = Mid(SOTIEN, I * 3 - 2, 3)
+                If NHOM <> Space(3) Then
+                    Select Case NHOM
+                        Case "000"
+                            If I = 4 Then
+                                Chu = "yeân Nhaät" & Space(1)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case ".00"
+                            If I = 5 Then
+                                Chu = " chaün." & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case Else
+                            S1 = Left(NHOM, 1)
+                            S2 = Mid(NHOM, 2, 1)
+                            S3 = Right(NHOM, 1)
+                            Chu = Space(0)
+                            Hang(3) = DOC(I)
+                            For J = 1 To 3
+                                Dich = Space(0)
+                                S = Val(Mid(NHOM, J, 1))
+                                If S > 0 Then
+                                    Dich = DEM(S) & Space(1) & Hang(J) & Space(1)
+                                End If
+                                Select Case J
+                                    Case 2 And S = 1
+                                        Dich = "möôøi" & Space(1)
+                                    Case 3 And S = 0 And NHOM <> Space(2) & "0"
+                                        Dich = Hang(J) & Space(1)
+                                    Case 3 And S = 5 And S2 <> Space(1) And S2 <> "0"
+                                        Dich = "l" & Mid(Dich, 2) 'Kyù töï en lôø
+                                    Case 2 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "linh" & Space(1)
+                                        End If
+
+                                        W = Mid(SOTIEN, 14, 2)
+                                        If W > "0" And I = 5 Then
+                                            Dich = "leû" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 = "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+                                End Select
+                                Chu = Chu & Dich
+                            Next J
+                    End Select
+                    Vitri = InStr(1, Chu, "möôi moät", 1)
+                    If Vitri > 0 Then Mid(Chu, Vitri, 9) = "möôi moát"
+                    KetQua = KetQua & Chu
+                End If
+            Next I
+        End If
+    End If
+    JPY = UCase(Left(KetQua, 1)) & Mid(KetQua, 2)
+End Function
+
+Function USD(ByVal BaoNhieu)
+    Dim KetQua, SOTIEN, NHOM, Chu, Dich, S1, S2, S3 As String
+    Dim I, J, Vitri As Byte, S As Double
+    Dim Hang, DOC, DEM
+    If BaoNhieu = 0 Then
+        KetQua = "Khoâng ñoàng"
+    Else
+        If Abs(BaoNhieu) > 999999999999.99 Then
+            KetQua = "Soá Quùa Lôùn"
+        Else
+            If BaoNhieu < 0 Then
+                KetQua = "Tröø" & Space(1)
+            Else
+                KetQua = Space(0)
+            End If
+            SOTIEN = Format(Abs(BaoNhieu), "###########0.00")
+            SOTIEN = Right(Space(12) & SOTIEN, 15)
+            Hang = Array("None", "traêm", "möôi", "gì ñoù")
+            DOC = Array("None", "tyû", "trieäu", "ngaøn", "ñoâ la Myõ", "cent.")
+            DEM = Array("None", "moät", "hai", "ba", "boán", "naêm", "saùu", "baûy", "taùm", "chín")
+            For I = 1 To 5
+                NHOM = Mid(SOTIEN, I * 3 - 2, 3)
+                If NHOM <> Space(3) Then
+                    Select Case NHOM
+                        Case "000"
+                            If I = 4 Then
+                                Chu = "ñoâ la Myõ" & Space(1)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case ".00"
+                            If I = 5 Then
+                                Chu = " chaün." & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case Else
+                            S1 = Left(NHOM, 1)
+                            S2 = Mid(NHOM, 2, 1)
+                            S3 = Right(NHOM, 1)
+                            Chu = Space(0)
+                            Hang(3) = DOC(I)
+                            For J = 1 To 3
+                                Dich = Space(0)
+                                S = Val(Mid(NHOM, J, 1))
+                                If S > 0 Then
+                                    Dich = DEM(S) & Space(1) & Hang(J) & Space(1)
+                                End If
+                                Select Case J
+                                    Case 2 And S = 1
+                                        Dich = "möôøi" & Space(1)
+                                    Case 3 And S = 0 And NHOM <> Space(2) & "0"
+                                        Dich = Hang(J) & Space(1)
+                                    Case 3 And S = 5 And S2 <> Space(1) And S2 <> "0"
+                                        Dich = "l" & Mid(Dich, 2) 'Kyù töï en lôø
+                                    Case 2 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "linh" & Space(1)
+                                        End If
+
+                                        W = Mid(SOTIEN, 14, 2)
+                                        If W > "0" And I = 5 Then
+                                            Dich = "leû" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+                                    Case 1 And S = 0 And S3 = "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+                                End Select
+                                Chu = Chu & Dich
+                            Next J
+                    End Select
+                    Vitri = InStr(1, Chu, "möôi moät", 1)
+                    If Vitri > 0 Then Mid(Chu, Vitri, 9) = "möôi moát"
+                    KetQua = KetQua & Chu
+                End If
+            Next I
+        End If
+    End If
+    USD = UCase(Left(KetQua, 1)) & Mid(KetQua, 2)
+End Function
+
+Function USA(ByVal AMT)
+    Dim ToRead, Chuoi, NHOM, Word As String
+    Dim L, J As Byte, W, X, Y, Z As Double
+    Dim Donvi, HChuc, Khung
+    If AMT = 0 Then
+        ToRead = "None"
+    Else
+        Donvi = Array("None", "one", "two", "three", "four", "five", "six", _
+        "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", _
+        "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen")
+        HChuc = Array("None", "None", "twenty", "thirty", "forty", "fifty", "sixty", _
+        "seventy", "eighty", "ninety")
+        Khung = Array("None", "trillion,", "billion,", "million,", "thousand,", "dollars", "cents")
+        If AMT < 0 Then
+            ToRead = "Minus" & Space(1)
+        Else
+            ToRead = Space(0)
+        End If
+        Chuoi = Format(Abs(AMT), "###############.00") ' 18 Soá haøng ñôn vò vaø 2 soá leû thaäp phaân'
+        Chuoi = Right(Space(15) & Chuoi, 18)
+        For L = 1 To 6
+            NHOM = Mid(Chuoi, L * 3 - 2, 3)
+            If NHOM <> Space(3) Then
+                Select Case NHOM
+                    Case "000"
+                        If L = 5 And Abs(AMT) > 1 Then
+                            Word = "dollars " & Space(1)
+                        Else
+                            Word = Space(0)
+                        End If
+                    Case ".00"
+                        Word = "only."
+                    Case Else
+                        X = Val(Left(NHOM, 1))
+                        Y = Val(Mid(NHOM, 2, 1))
+                        Z = Val(Right(NHOM, 1))
+                        W = Val(Right(NHOM, 2))
+                        If X = 0 Then
+                            Word = Space(0)
+                        Else
+                            Word = Donvi(X) & Space(1) & "hundred" & Space(1)
+                            If W > 0 And W < 21 Then
+                                Word = Word & "and" & Space(1)
+                            End If
+                        End If
+                        If L = 6 And Abs(AMT) > 1 Then
+                            Word = "and" & Space(1) & Word
+                        End If
+                        If W < 20 And W > 0 Then
+                            Word = Word & Donvi(W) & Space(1)
+                        Else
+                            If W >= 20 Then
+                                Word = Word & HChuc(Y) & Space(1)
+                                If Z > 0 Then
+                                    Word = Word & Donvi(Z) & Space(1)
+                                End If
+                            End If
+                        End If
+                        Word = Word & Khung(L) & Space(1)
+                End Select
+                ToRead = ToRead & Word
+            End If
+        Next L
+    End If
+    USA = UCase(Left(ToRead, 1)) & Mid(ToRead, 2)
+End Function
+
+Function SJC(ByVal BaoNhieu)
+    Dim KetQua, SOTIEN, NHOM, Chu, Dich, S1, S2, S3 As String
+    Dim I, J, Vitri As Byte, S As Double
+    Dim Hang, DOC, DEM
+    If BaoNhieu = 0 Then
+        KetQua = "Khoâng ly"
+    Else
+        If Abs(BaoNhieu) > 999999999999.99 Then
+            KetQua = "Soá Quùa Lôùn"
+        Else
+            If BaoNhieu < 0 Then
+                KetQua = "Tröø" & Space(1)
+            Else
+                KetQua = Space(0)
+            End If
+            SOTIEN = Format(Abs(BaoNhieu), "###########0.00")
+            SOTIEN = Right(Space(12) & SOTIEN, 15)
+            Hang = Array("None", "traêm", "möôi", "gì ñoù")
+            DOC = Array("None", "tyû", "trieäu", "ngaøn", "chæ", "ly")
+            DEM = Array("None", "moät", "hai", "ba", "boán", "naêm", "saùu", "baûy", "taùm", "chín")
+            For I = 1 To 5
+                NHOM = Mid(SOTIEN, I * 3 - 2, 3)
+                If NHOM <> Space(3) Then
+                    Select Case NHOM
+                        Case "000"
+                            If I = 4 Then
+                                Chu = "chæ" & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case ".00"
+                            If I = 5 Then
+                                Chu = " chaün " & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case Else
+                            S1 = Left(NHOM, 1)
+                            S2 = Mid(NHOM, 2, 1)
+                            S3 = Right(NHOM, 1)
+                            Chu = Space(0)
+                            Hang(3) = DOC(I)
+                            For J = 1 To 3
+                                Dich = Space(0)
+                                S = Val(Mid(NHOM, J, 1))
+                                If S > 0 Then
+                                    Dich = DEM(S) & Space(1) & Hang(J) & Space(1)
+                                End If
+                                Select Case J
+                                    Case 2 And S = 1
+                                        Dich = "möôøi" & Space(1)
+                                    Case 3 And S = 0 And NHOM <> Space(2) & "0"
+                                        Dich = Hang(J) & Space(1)
+                                    Case 3 And S = 5 And S2 <> Space(1) And S2 <> "0"
+                                        Dich = "l" & Mid(Dich, 2) 'Kyù töï en lôø
+                                    Case 2 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "linh" & Space(1)
+                                        End If
+
+                                        W = Mid(SOTIEN, 14, 2)
+                                        If W > "0" And I = 5 Then
+                                            Dich = "leû" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 = "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                End Select
+
+
+                                Chu = Chu & Dich
+                            Next J
+                    End Select
+                    Vitri = InStr(1, Chu, "möôi moät", 1)
+                    If Vitri > 0 Then Mid(Chu, Vitri, 9) = "möôi moát"
+                    KetQua = KetQua & Chu
+                End If
+            Next I
+        End If
+    End If
+    SJC = UCase(Left(KetQua, 1)) & Mid(KetQua, 2)
+End Function
+
+Function SGD(ByVal BaoNhieu)
+    Dim KetQua, SOTIEN, NHOM, Chu, Dich, S1, S2, S3 As String
+    Dim I, J, Vitri As Byte, S As Double
+    Dim Hang, DOC, DEM
+    If BaoNhieu = 0 Then
+        KetQua = "Khoâng ñoàng"
+    Else
+        If Abs(BaoNhieu) > 999999999999.99 Then
+            KetQua = "Soá Quùa Lôùn"
+        Else
+            If BaoNhieu < 0 Then
+                KetQua = "Tröø" & Space(1)
+            Else
+                KetQua = Space(0)
+            End If
+            SOTIEN = Format(Abs(BaoNhieu), "###########0.00")
+            SOTIEN = Right(Space(12) & SOTIEN, 15)
+            Hang = Array("None", "traêm", "möôi", "gì ñoù")
+            DOC = Array("None", "tyû", "trieäu", "ngaøn", "ñoâ la Sinhgapore", "cent.")
+            DEM = Array("None", "moät", "hai", "ba", "boán", "naêm", "saùu", "baûy", "taùm", "chín")
+            For I = 1 To 5
+                NHOM = Mid(SOTIEN, I * 3 - 2, 3)
+                If NHOM <> Space(3) Then
+                    Select Case NHOM
+                        Case "000"
+                            If I = 4 Then
+                                Chu = "ñoâ la Sinhgapore" & Space(1)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case ".00"
+                            If I = 5 Then
+                                Chu = " chaün." & Space(0)
+                            Else
+                                Chu = Space(0)
+                            End If
+                        Case Else
+                            S1 = Left(NHOM, 1)
+                            S2 = Mid(NHOM, 2, 1)
+                            S3 = Right(NHOM, 1)
+                            Chu = Space(0)
+                            Hang(3) = DOC(I)
+                            For J = 1 To 3
+                                Dich = Space(0)
+                                S = Val(Mid(NHOM, J, 1))
+                                If S > 0 Then
+                                    Dich = DEM(S) & Space(1) & Hang(J) & Space(1)
+                                End If
+                                Select Case J
+                                    Case 2 And S = 1
+                                        Dich = "möôøi" & Space(1)
+                                    Case 3 And S = 0 And NHOM <> Space(2) & "0"
+                                        Dich = Hang(J) & Space(1)
+                                    Case 3 And S = 5 And S2 <> Space(1) And S2 <> "0"
+                                        Dich = "l" & Mid(Dich, 2) 'Kyù töï en lôø
+                                    Case 2 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "linh" & Space(1)
+                                        End If
+
+                                        W = Mid(SOTIEN, 14, 2)
+                                        If W > "0" And I = 5 Then
+                                            Dich = "leû" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 <> "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Or (S1 = "0" And I = 5) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+
+                                    Case 1 And S = 0 And S3 = "0"
+                                        If (S1 >= "1" And S1 <= "9") Or (S1 = "0" And I = 1) Or (S1 = "0" And I = 2) Or (S1 = "0" And I = 3) Or (S1 = "0" And I = 4) Then
+                                            Dich = "khoâng traêm" & Space(1)
+                                        End If
+                                End Select
+                                Chu = Chu & Dich
+                            Next J
+                    End Select
+                    Vitri = InStr(1, Chu, "möôi moät", 1)
+                    If Vitri > 0 Then Mid(Chu, Vitri, 9) = "möôi moát"
+                    KetQua = KetQua & Chu
+                End If
+            Next I
+        End If
+    End If
+    SGD = UCase(Left(KetQua, 1)) & Mid(KetQua, 2)
+End Function
